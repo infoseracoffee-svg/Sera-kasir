@@ -3,125 +3,87 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kasir Pintar Pro Clone</title>
+  <title>Kasir Pintar - Penjualan</title>
   <style>
-    /* Reset dasar agar tampilan rapi di semua browser */
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
+    /* Reset & Base Styles */
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, sans-serif; }
+    body { background-color: #f8f9fa; display: flex; justify-content: center; }
+    
+    /* Mobile App Container (membatasi lebar agar menyerupai layar HP di web) */
+    .app-container { width: 100%; max-width: 480px; background-color: #ffffff; height: 100vh; position: relative; display: flex; flex-direction: column; box-shadow: 0 0 15px rgba(0,0,0,0.1); }
 
-    /* Mengatur latar belakang dan posisi ke tengah layar */
-    body {
-      background-color: #f3f4f6;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      padding: 1rem;
-    }
+    /* --- HEADER --- */
+    .header { display: flex; justify-content: space-between; align-items: center; padding: 16px; border-bottom: 1px solid #f1f1f1; }
+    .header-left { display: flex; align-items: center; gap: 12px; }
+    .menu-icon { font-size: 24px; color: #00b87c; cursor: pointer; }
+    .page-title { font-size: 18px; font-weight: 600; color: #333; }
+    .header-right { display: flex; gap: 12px; color: #00b87c; font-weight: bold; }
 
-    /* Kotak putih untuk form login */
-    .login-container {
-      background-color: #ffffff;
-      padding: 2rem;
-      border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-      width: 100%;
-      max-width: 400px;
-    }
+    /* --- ACTION BAR (Ikon Cari, Tambah, Scan) --- */
+    .action-bar { display: flex; gap: 16px; padding: 12px 16px; overflow-x: auto; color: #00b87c; font-size: 20px; align-items: center; border-bottom: 1px solid #f1f1f1; }
+    .action-icon { cursor: pointer; }
+    .filter-btn { border: 1px solid #00b87c; color: #00b87c; padding: 4px 12px; border-radius: 16px; font-size: 14px; font-weight: 500; }
 
-    /* Bagian teks judul */
-    .header {
-      text-align: center;
-      margin-bottom: 1.5rem;
-    }
-    .header h1 {
-      color: #2563eb; /* Warna biru */
-      font-size: 1.5rem;
-      margin-bottom: 0.5rem;
-    }
-    .header p {
-      color: #6b7280; /* Warna abu-abu */
-      font-size: 0.875rem;
-    }
+    /* --- AREA KONTEN / DAFTAR BARANG --- */
+    .content-area { flex: 1; padding: 16px; overflow-y: auto; background-color: #fafafa; }
+    
+    /* Tombol Tambah Barang Placeholder */
+    .add-item-card { display: flex; align-items: center; gap: 16px; padding: 16px; background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); cursor: pointer; }
+    .add-icon-box { width: 40px; height: 40px; background-color: #f1f5f9; border-radius: 8px; display: flex; justify-content: center; align-items: center; color: #a0aec0; font-size: 24px; }
+    .add-item-text { font-weight: 500; color: #333; }
 
-    /* Bagian input form */
-    .form-group {
-      margin-bottom: 1rem;
-    }
-    .form-group label {
-      display: block;
-      color: #374151;
-      font-size: 0.875rem;
-      font-weight: bold;
-      margin-bottom: 0.5rem;
-    }
-    .form-group input {
-      width: 100%;
-      padding: 0.75rem;
-      border: 1px solid #d1d5db;
-      border-radius: 6px;
-      font-size: 1rem;
-      outline: none;
-      transition: border-color 0.3s;
-    }
-    /* Efek saat input diklik */
-    .form-group input:focus {
-      border-color: #2563eb;
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
-    }
-
-    /* Tombol masuk */
-    .btn-login {
-      width: 100%;
-      background-color: #2563eb;
-      color: white;
-      font-weight: bold;
-      padding: 0.75rem;
-      border: none;
-      border-radius: 6px;
-      font-size: 1rem;
-      cursor: pointer;
-      margin-top: 1rem;
-      transition: background-color 0.3s;
-    }
-    /* Efek saat tombol disentuh/di-hover */
-    .btn-login:hover {
-      background-color: #1d4ed8;
-    }
+    /* --- BOTTOM BAR (Keranjang) --- */
+    .bottom-bar { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background-color: #ffffff; border-top: 1px solid #eee; position: absolute; bottom: 0; width: 100%; }
+    .cart-btn { background-color: #00b87c; color: white; display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; border-radius: 24px; flex: 1; margin-right: 12px; cursor: pointer; border: none; font-size: 16px; font-weight: bold; }
+    .profile-btn { width: 44px; height: 44px; border: 1px solid #00b87c; border-radius: 12px; display: flex; justify-content: center; align-items: center; color: #00b87c; font-size: 20px; background: none; cursor: pointer; }
   </style>
 </head>
 <body>
 
-  <div class="login-container">
+  <div class="app-container">
+    
+    <!-- Bagian Header Atas -->
     <div class="header">
-      <h1>Kasir Web Pro</h1>
-      <p>Masuk untuk mengelola toko Anda</p>
+      <div class="header-left">
+        <div class="menu-icon">☰</div>
+        <div class="page-title">Penjualan</div>
+      </div>
+      <div class="header-right">
+        <!-- Ikon Bintang & Titik Tiga (Simulasi) -->
+        <span>☆</span>
+        <span>⋮</span>
+      </div>
     </div>
 
-    <form id="loginForm">
-      <div class="form-group">
-        <label for="email">Email</label>
-        <input id="email" type="email" placeholder="email@toko.com">
-      </div>
-      
-      <div class="form-group">
-        <label for="password">Password / PIN</label>
-        <input id="password" type="password" placeholder="******">
-      </div>
-      
-      <button class="btn-login" type="button" onclick="login()">Masuk</button>
-    </form>
-  </div>
+    <!-- Baris Aksi & Filter -->
+    <div class="action-bar">
+      <span class="action-icon">🔍</span>
+      <span class="action-icon">➕</span>
+      <span class="action-icon">📷</span> <!-- Ikon Scan -->
+      <span class="action-icon">|||</span> <!-- Ikon Barcode -->
+      <div class="filter-btn">Semua</div>
+    </div>
 
-  <script>
-    function login() {
-      alert("Fungsi login diklik! Nanti akan diarahkan ke Dashboard.");
-    }
-  </script>
+    <!-- Area Daftar Barang -->
+    <div class="content-area">
+      <div class="add-item-card">
+        <div class="add-icon-box">+</div>
+        <div class="add-item-text">Tambah Barang</div>
+      </div>
+    </div>
+
+    <!-- Baris Keranjang di Bawah -->
+    <div class="bottom-bar">
+      <button class="cart-btn">
+        <span style="font-size: 20px;">0 <span style="font-size: 14px; font-weight: normal;">Barang</span></span>
+        <span>LANJUT ></span>
+      </button>
+      <button class="profile-btn">
+        👤
+      </button>
+    </div>
+
+  </div>
 
 </body>
 </html>
