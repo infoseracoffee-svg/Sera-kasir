@@ -1,7 +1,6 @@
-// script.js - VERSI FIREBASE LENGKAP (DENGAN FITUR HAPUS BARANG)
+// script.js - VERSI FIREBASE LENGKAP DENGAN PEMISAHAN ADMIN & KASIR
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-// TAMBAHAN: Import doc dan deleteDoc untuk menghapus data
 import { getFirestore, collection, getDocs, addDoc, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
@@ -27,7 +26,7 @@ onAuthStateChanged(auth, (user) => {
   if (user) {
     window.ambilDataDariFirebase();
   } else {
-    if(!window.location.href.includes("login.html")) {
+    if(!window.location.href.includes("login.html") && !window.location.href.includes("index.html")) {
         window.location.href = "login.html";
     }
   }
@@ -36,7 +35,9 @@ onAuthStateChanged(auth, (user) => {
 // FUNGSI KELUAR
 window.keluarAkun = function() {
   if(confirm("Apakah Anda yakin ingin keluar?")) {
-    signOut(auth).catch((error) => alert("Gagal keluar dari akun."));
+    signOut(auth).then(() => {
+      window.location.href = "login.html";
+    }).catch((error) => alert("Gagal keluar dari akun."));
   }
 }
 
@@ -62,62 +63,77 @@ window.ambilDataDariFirebase = async function() {
     tampilkanProdukUI();
   } catch (error) {
     console.error("Gagal mengambil data:", error);
-    areaProduk.innerHTML = "<p style='padding: 16px; color: red;'>Data gagal dimuat. Periksa koneksi internet atau Aturan Firebase.</p>";
+    areaProduk.innerHTML = "<p style='padding: 16px; color: red;'>Data gagal dimuat. Periksa koneksi internet.</p>";
   } finally {
     isFetching = false;
   }
 }
 
-// FUNGSI 2: TAMPILKAN KE LAYAR (Dengan Tombol Hapus)
+// FUNGSI 2: TAMPILKAN KE LAYAR
 function tampilkanProdukUI() {
   const areaProduk = document.getElementById("area-produk");
   areaProduk.innerHTML = ""; 
+
+  // Cek apakah ini halaman Manajemen atau Penjualan
+  const halamanSaatIni = document.body.getAttribute("data-page");
 
   produkList.forEach(produk => {
     const div = document.createElement("div");
     div.className = "add-item-card"; 
     div.style.marginBottom = "12px"; 
     
-    // Kita tambahkan tombol hapus (ikon tong sampah) di bagian kanan
-    div.innerHTML = `
-      <div class="add-icon-box" style="background-color: #e6f4ea; color: #00b87c;" onclick="tambahKeKeranjang({id:'${produk.id}', nama:'${produk.nama}', harga:${produk.harga}})">
-        <svg class="icon" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
-      </div>
-      <div class="add-item-text" style="flex: 1;" onclick="tambahKeKeranjang({id:'${produk.id}', nama:'${produk.nama}', harga:${produk.harga}})">
-        <div style="font-weight:bold; color:#333;">${produk.nama}</div>
-        <div style="color: #00b87c; font-size: 14px; margin-top:2px;">Rp ${Number(produk.harga).toLocaleString("id-ID")}</div>
-      </div>
-      <div onclick="hapusBarang('${produk.id}', '${produk.nama}', event)" style="padding: 8px; color: #ef4444; border-radius: 8px; cursor: pointer;">
-        <svg class="icon icon-sm" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-      </div>
-    `;
+    if (halamanSaatIni === "manajemen") {
+      // TAMPILAN MANAJEMEN: Ada ikon hapus, tidak masuk keranjang saat diklik
+      div.innerHTML = `
+        <div class="add-icon-box" style="background-color: #e6f4ea; color: #00b87c;">
+          <svg class="icon" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+        </div>
+        <div class="add-item-text" style="flex: 1;">
+          <div style="font-weight:bold; color:#333;">${produk.nama}</div>
+          <div style="color: #00b87c; font-size: 14px; margin-top:2px;">Rp ${Number(produk.harga).toLocaleString("id-ID")}</div>
+        </div>
+        <div onclick="hapusBarang('${produk.id}', '${produk.nama}')" style="padding: 8px; color: #ef4444; border-radius: 8px; cursor: pointer;">
+          <svg class="icon icon-sm" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+        </div>
+      `;
+    } else {
+      // TAMPILAN PENJUALAN: Tidak ada hapus, masuk keranjang saat diklik
+      div.innerHTML = `
+        <div class="add-icon-box" style="background-color: #e6f4ea; color: #00b87c;">
+          <svg class="icon" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+        </div>
+        <div class="add-item-text" style="flex: 1;">
+          <div style="font-weight:bold; color:#333;">${produk.nama}</div>
+          <div style="color: #00b87c; font-size: 14px; margin-top:2px;">Rp ${Number(produk.harga).toLocaleString("id-ID")}</div>
+        </div>
+      `;
+      // Tambahkan event klik untuk masuk keranjang
+      div.onclick = () => tambahKeKeranjang(produk);
+    }
     
     areaProduk.appendChild(div);
   });
 
-  const btnTambah = document.createElement("div");
-  btnTambah.className = "add-item-card";
-  btnTambah.style.marginBottom = "12px";
-  btnTambah.style.justifyContent = "center";
-  btnTambah.style.border = "2px dashed #00b87c";
-  btnTambah.style.backgroundColor = "#f4fcf7";
-  btnTambah.innerHTML = `<div style="font-weight:bold; color:#00b87c;">+ Tambah Menu Baru</div>`;
-  btnTambah.onclick = () => window.bukaModalTambah();
-  areaProduk.appendChild(btnTambah);
+  // Jika ini halaman manajemen, tambahkan tombol "+ Tambah Menu Baru" di bawah
+  if (halamanSaatIni === "manajemen") {
+    const btnTambah = document.createElement("div");
+    btnTambah.className = "add-item-card";
+    btnTambah.style.marginBottom = "12px";
+    btnTambah.style.justifyContent = "center";
+    btnTambah.style.border = "2px dashed #00b87c";
+    btnTambah.style.backgroundColor = "#f4fcf7";
+    btnTambah.style.cursor = "pointer";
+    btnTambah.innerHTML = `<div style="font-weight:bold; color:#00b87c;">+ Tambah Menu Baru</div>`;
+    btnTambah.onclick = () => window.bukaModalTambah();
+    areaProduk.appendChild(btnTambah);
+  }
 }
 
-// FUNGSI 3: LOGIKA HAPUS BARANG
-window.hapusBarang = async function(id, nama, event) {
-  // event.stopPropagation() berfungsi agar saat tong sampah diklik, 
-  // barang tidak ikut masuk ke keranjang belanja
-  event.stopPropagation(); 
-
-  if(confirm(`Yakin ingin menghapus menu "${nama}" dari database?`)) {
+// FUNGSI 3: LOGIKA HAPUS BARANG (Hanya jalan di Manajemen)
+window.hapusBarang = async function(id, nama) {
+  if(confirm(`Yakin ingin menghapus menu "${nama}" dari sistem?`)) {
     try {
-      // Perintah menghapus dokumen di Firebase berdasarkan ID
       await deleteDoc(doc(db, "produk", id));
-      
-      // Refresh layar setelah terhapus
       window.ambilDataDariFirebase();
     } catch (error) {
       console.error("Gagal menghapus:", error);
@@ -126,7 +142,7 @@ window.hapusBarang = async function(id, nama, event) {
   }
 }
 
-// FUNGSI 4: LOGIKA KERANJANG
+// FUNGSI 4: LOGIKA KERANJANG (Hanya jalan di Penjualan)
 window.tambahKeKeranjang = function(produk) {
   keranjang.push(produk); 
   updateKeranjangUI();    
@@ -158,15 +174,21 @@ window.tutupMenu = function() {
   document.getElementById("overlay-menu").classList.remove("open");
 }
 
-// FUNGSI 6: MODAL & SIMPAN KE FIREBASE
+// FUNGSI 6: MODAL & SIMPAN KE FIREBASE (Hanya jalan di Manajemen)
 window.bukaModalTambah = function() {
-  document.getElementById("modal-tambah").classList.add("show");
-  document.getElementById("input-nama").focus();
+  const modal = document.getElementById("modal-tambah");
+  if(modal) {
+    modal.classList.add("show");
+    document.getElementById("input-nama").focus();
+  }
 }
 window.tutupModalTambah = function() {
-  document.getElementById("modal-tambah").classList.remove("show");
-  document.getElementById("input-nama").value = "";
-  document.getElementById("input-harga").value = "";
+  const modal = document.getElementById("modal-tambah");
+  if(modal) {
+    modal.classList.remove("show");
+    document.getElementById("input-nama").value = "";
+    document.getElementById("input-harga").value = "";
+  }
 }
 
 window.simpanBarangBaru = async function() {
