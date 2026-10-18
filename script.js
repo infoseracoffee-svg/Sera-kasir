@@ -1,29 +1,31 @@
-// Data simulasi (Dummy Data) untuk katalog produk
-// Nanti data ini akan ditarik dari Firebase
+// script.js - VERSI SIMULASI (TANPA FIREBASE)
+
+// 1. Data Simulasi (Dummy Data) - Nanti ini yang akan diganti ke Firebase
 let produkList = [
-  { id: 1, nama: "Kopi Susu Aren", harga: 18000 },
-  { id: 2, nama: "Americano Dingin", harga: 15000 },
-  { id: 3, nama: "Roti Bakar Coklat", harga: 12000 }
+  { id: 1, nama: "Kopi Hitam", harga: 15000 },
+  { id: 2, nama: "Cappuccino", harga: 22000 },
+  { id: 3, nama: "Matcha Latte", harga: 25000 },
+  { id: 4, nama: "Kentang Goreng", harga: 18000 }
 ];
 
-// Array untuk menampung barang yang masuk ke keranjang
+// Array untuk menampung barang yang diklik
 let keranjang = [];
 
-// Fungsi ini otomatis berjalan saat halaman penjualan.html dibuka
+// Berjalan otomatis saat halaman penjualan dibuka
 document.addEventListener("DOMContentLoaded", () => {
-  tampilkanProduk();
+  tampilkanProdukUI();
 });
 
-// Fungsi untuk mencetak daftar produk ke layar
-function tampilkanProduk() {
+// 2. Fungsi untuk menampilkan data ke layar HTML
+function tampilkanProdukUI() {
   const areaProduk = document.getElementById("area-produk");
-  areaProduk.innerHTML = ""; // Kosongkan layar terlebih dahulu
+  areaProduk.innerHTML = ""; // Bersihkan layar
 
-  // Looping (ulangi) pembuatan desain untuk setiap produk di database
+  // Ulangi pembuatan kotak HTML untuk setiap barang di produkList
   produkList.forEach(produk => {
     const div = document.createElement("div");
     div.className = "add-item-card"; 
-    div.style.marginBottom = "12px"; // Jarak antar kartu
+    div.style.marginBottom = "12px"; 
     
     div.innerHTML = `
       <div class="add-icon-box" style="background-color: #e6f4ea; color: #00b87c;">
@@ -35,43 +37,32 @@ function tampilkanProduk() {
       </div>
     `;
     
-    // Saat kartu produk ditekan, jalankan fungsi tambahKeKeranjang
+    // Jika kotak diklik, masukkan barang ke keranjang
     div.onclick = () => tambahKeKeranjang(produk);
     areaProduk.appendChild(div);
   });
-
-  // Tambahkan tombol "Tambah Barang Baru" di bagian paling bawah
-  const btnTambah = document.createElement("div");
-  btnTambah.className = "add-item-card";
-  btnTambah.innerHTML = `
-    <div class="add-icon-box">
-      <svg class="icon" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-    </div>
-    <div class="add-item-text">Tambah Master Barang</div>
-  `;
-  btnTambah.onclick = () => alert("Nanti ini membuka form untuk simpan barang baru ke Firebase.");
-  areaProduk.appendChild(btnTambah);
 }
 
-// Fungsi untuk memasukkan barang ke keranjang
+// 3. Logika Menambah ke Keranjang
 function tambahKeKeranjang(produk) {
-  keranjang.push(produk);
-  updateKeranjangUI();
+  keranjang.push(produk); // Masukkan barang
+  updateKeranjangUI();    // Perbarui tulisan di layar
 }
 
-// Fungsi untuk memperbarui angka dan total harga di tombol bawah
+// 4. Memperbarui Tulisan Jumlah Barang & Total Harga di Bawah
 function updateKeranjangUI() {
   const elemenJumlah = document.getElementById("jumlah-barang");
   const elemenTotal = document.getElementById("total-harga");
   
-  // Hitung total harga seluruh isi keranjang
   let totalHarga = 0;
-  keranjang.forEach(item => totalHarga += item.harga);
+  // Hitung total semua harga di keranjang
+  keranjang.forEach(item => {
+    totalHarga += item.harga;
+  });
 
-  // Perbarui teks di layar
+  // Ganti teks di layar
   elemenJumlah.innerHTML = `${keranjang.length} <span style="font-size: 14px; font-weight: normal;">Barang</span>`;
   
-  // Tampilkan nominal rupiah di tombol "LANJUT"
   if(keranjang.length > 0) {
     elemenTotal.innerHTML = `Rp ${totalHarga.toLocaleString("id-ID")}`;
   } else {
