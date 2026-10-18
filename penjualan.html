@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Penjualan - Kasir Pintar Clone</title>
-  <!-- Menghubungkan ke file CSS terpisah -->
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -14,9 +13,7 @@
     <!-- HEADER -->
     <div class="header">
       <div class="header-left">
-        <div class="menu-icon">
-          <svg class="icon" viewBox="0 0 24 24"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
-        </div>
+        <div class="menu-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M3 12h18M3 6h18M3 18h18"/></svg></div>
         <div class="page-title">Penjualan</div>
       </div>
       <div class="header-right">
@@ -35,21 +32,24 @@
       <div class="filter-btn">Semua</div>
     </div>
 
-    <!-- KONTEN DAFTAR BARANG -->
-    <div class="content-area">
-      <div class="add-item-card">
-        <div class="add-icon-box">
-          <svg class="icon" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        </div>
-        <div class="add-item-text">Tambah Barang</div>
-      </div>
+    <!-- KONTEN DAFTAR BARANG (Diberi ID "area-produk") -->
+    <div class="content-area" id="area-produk">
+      <!-- Isi area ini akan dimasukkan secara otomatis oleh file script.js -->
     </div>
 
     <!-- BOTTOM BAR (Keranjang) -->
     <div class="bottom-bar">
-      <button class="cart-btn">
-        <span style="font-size: 20px; display:flex; align-items:baseline; gap:4px;">0 <span style="font-size: 14px; font-weight: normal;">Barang</span></span>
-        <span style="display:flex; align-items:center; gap:4px;">LANJUT <svg class="icon icon-sm" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></span>
+      <button class="cart-btn" onclick="alert('Lanjut ke halaman Pembayaran!')">
+        <!-- Area Jumlah Barang (Diberi ID "jumlah-barang") -->
+        <span id="jumlah-barang" style="font-size: 20px; display:flex; align-items:baseline; gap:4px;">
+          0 <span style="font-size: 14px; font-weight: normal;">Barang</span>
+        </span>
+        
+        <span style="display:flex; align-items:center; gap:8px;">
+          <!-- Area Total Harga (Diberi ID "total-harga") -->
+          <span id="total-harga" style="font-size: 14px; font-weight: normal;"></span>
+          LANJUT <svg class="icon icon-sm" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+        </span>
       </button>
       <button class="profile-btn">
         <svg class="icon" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
@@ -58,5 +58,7 @@
 
   </div>
 
+  <!-- Panggil file JavaScript di baris paling bawah sebelum body ditutup -->
+  <script src="script.js"></script>
 </body>
 </html>
