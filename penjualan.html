@@ -8,12 +8,42 @@
 </head>
 <body>
 
+  <!-- =============================== -->
+  <!-- SIDEBAR (MENU SLIDE TERSEMBUNYI) -->
+  <!-- =============================== -->
+  <div id="overlay-menu" class="overlay" onclick="tutupMenu()"></div>
+  <div id="sidebar-menu" class="sidebar">
+    <div class="sidebar-header">
+      <div class="profile-info">
+        <div class="profile-pic">S</div>
+        <div>
+          <div style="font-weight: bold; font-size: 16px;">Sera Coffee</div>
+          <div style="color: #6b7280; font-size: 14px;">Owner</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="sidebar-content">
+      <a href="#" class="menu-item"><span class="menu-icon-sidebar">⊞</span> Manajemen</a>
+      <a href="#" class="menu-item active"><span class="menu-icon-sidebar">🛒</span> Transaksi Penjualan</a>
+      <a href="#" class="menu-item"><span class="menu-icon-sidebar">📦</span> Pembelian dari Supplier</a>
+      <a href="#" class="menu-item"><span class="menu-icon-sidebar">💰</span> Keuangan</a>
+      <a href="#" class="menu-item"><span class="menu-icon-sidebar">📄</span> Laporan</a>
+      <a href="#" class="menu-item"><span class="menu-icon-sidebar">⚙️</span> Pengaturan</a>
+      <!-- Tombol Keluar (Kembali ke Login) -->
+      <a href="login.html" class="menu-item" style="color: red; margin-top: 20px;">
+        <span class="menu-icon-sidebar">🚪</span> Keluar
+      </a>
+    </div>
+  </div>
+
   <div class="app-container">
     
     <!-- HEADER -->
     <div class="header">
       <div class="header-left">
-        <div class="menu-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M3 12h18M3 6h18M3 18h18"/></svg></div>
+        <!-- Tambahkan onclick="bukaMenu()" pada menu-icon -->
+        <div class="menu-icon" onclick="bukaMenu()"><svg class="icon" viewBox="0 0 24 24"><path d="M3 12h18M3 6h18M3 18h18"/></svg></div>
         <div class="page-title">Penjualan</div>
       </div>
       <div class="header-right">
@@ -32,24 +62,16 @@
       <div class="filter-btn">Semua</div>
     </div>
 
-    <!-- KONTEN DAFTAR BARANG (Diberi ID "area-produk") -->
+    <!-- KONTEN DAFTAR BARANG -->
     <div class="content-area" id="area-produk">
-      <!-- Isi area ini akan dimasukkan secara otomatis oleh file script.js -->
+      <!-- Diisi otomatis oleh JavaScript -->
     </div>
 
     <!-- BOTTOM BAR (Keranjang) -->
     <div class="bottom-bar">
-      <button class="cart-btn" onclick="alert('Lanjut ke halaman Pembayaran!')">
-        <!-- Area Jumlah Barang (Diberi ID "jumlah-barang") -->
-        <span id="jumlah-barang" style="font-size: 20px; display:flex; align-items:baseline; gap:4px;">
-          0 <span style="font-size: 14px; font-weight: normal;">Barang</span>
-        </span>
-        
-        <span style="display:flex; align-items:center; gap:8px;">
-          <!-- Area Total Harga (Diberi ID "total-harga") -->
-          <span id="total-harga" style="font-size: 14px; font-weight: normal;"></span>
-          LANJUT <svg class="icon icon-sm" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
-        </span>
+      <button class="cart-btn" onclick="alert('Lanjut ke Pembayaran')">
+        <span id="jumlah-barang" style="font-size: 20px; display:flex; align-items:baseline; gap:4px;">0 <span style="font-size: 14px; font-weight: normal;">Barang</span></span>
+        <span style="display:flex; align-items:center; gap:8px;"><span id="total-harga" style="font-size: 14px; font-weight: normal;"></span> LANJUT <svg class="icon icon-sm" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></span>
       </button>
       <button class="profile-btn">
         <svg class="icon" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
@@ -58,7 +80,6 @@
 
   </div>
 
-  <!-- Panggil file JavaScript di baris paling bawah sebelum body ditutup -->
   <script src="script.js"></script>
 </body>
 </html>
