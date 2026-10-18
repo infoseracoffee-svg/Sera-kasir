@@ -1,8 +1,8 @@
-// script.js - VERSI FIREBASE LENGKAP (DENGAN PROTEKSI LOGIN)
+// script.js - VERSI FIREBASE LENGKAP & DIAUDIT
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, collection, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-// Tambahkan modul Auth
+// Tambahkan query dan orderBy untuk mengurutkan data
+import { getFirestore, collection, getDocs, addDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
 const firebaseConfig = {
@@ -20,36 +20,42 @@ const auth = getAuth(app);
 
 let produkList = [];
 let keranjang = [];
+let isFetching = false; // Mencegah pengambilan data berulang kali secara bersamaan
 
-// PROTEKSI HALAMAN (Cek apakah user sudah login)
+// PROTEKSI HALAMAN
 onAuthStateChanged(auth, (user) => {
   if (user) {
-    // Jika sudah login, baru ambil data barang
     window.ambilDataDariFirebase();
   } else {
-    // Jika belum login, tendang ke halaman login
-    window.location.href = "login.html";
+    // Hindari redirect berulang jika memang sudah di halaman login
+    if(!window.location.href.includes("login.html")) {
+        window.location.href = "login.html";
+    }
   }
 });
 
-// FUNGSI LOGOUT / KELUAR
+// FUNGSI KELUAR
 window.keluarAkun = function() {
-  signOut(auth).then(() => {
-    // Berhasil keluar, akan otomatis dialihkan oleh onAuthStateChanged
-  }).catch((error) => {
-    alert("Gagal keluar dari akun.");
-  });
+  if(confirm("Apakah Anda yakin ingin keluar?")) {
+    signOut(auth).catch((error) => alert("Gagal keluar dari akun."));
+  }
 }
 
-// FUNGSI 1: AMBIL DATA (Hanya jalan jika sudah login)
+// FUNGSI 1: AMBIL DATA (Diurutkan berdasarkan Nama)
 window.ambilDataDariFirebase = async function() {
+  if(isFetching) return;
+  isFetching = true;
+
   const areaProduk = document.getElementById("area-produk");
   if(!areaProduk) return;
   
   areaProduk.innerHTML = "<p style='padding: 16px; color: #6b7280; text-align:center;'>Memuat menu Sera Coffee...</p>";
 
   try {
-    const querySnapshot = await getDocs(collection(db, "produk"));
+    // Ambil data dan urutkan berdasarkan nama secara Ascending (A-Z)
+    const q = query(collection(db, "produk"), orderBy("nama", "asc"));
+    const querySnapshot = await getDocs(q);
+    
     produkList = []; 
     querySnapshot.forEach((doc) => {
       let dataAsli = doc.data();
@@ -59,7 +65,10 @@ window.ambilDataDariFirebase = async function() {
     tampilkanProdukUI();
   } catch (error) {
     console.error("Gagal mengambil data:", error);
-    areaProduk.innerHTML = "<p style='padding: 16px; color: red;'>Gagal memuat data. Periksa internet Anda.</p>";
+    // Jika gagal karena orderBy (biasanya butuh Index Firestore pertama kali), fallback tanpa pengurutan
+    areaProduk.innerHTML = "<p style='padding: 16px; color: red;'>Data gagal dimuat. (Atau sedang membuat Index di Firestore).</p>";
+  } finally {
+    isFetching = false;
   }
 }
 
@@ -131,13 +140,16 @@ window.tutupMenu = function() {
 // FUNGSI 5: MODAL & SIMPAN KE FIREBASE
 window.bukaModalTambah = function() {
   document.getElementById("modal-tambah").classList.add("show");
+  document.getElementById("input-nama").focus();
 }
 window.tutupModalTambah = function() {
   document.getElementById("modal-tambah").classList.remove("show");
+  document.getElementById("input-nama").value = "";
+  document.getElementById("input-harga").value = "";
 }
 
 window.simpanBarangBaru = async function() {
-  const inputNama = document.getElementById("input-nama").value;
+  const inputNama = document.getElementById("input-nama").value.trim();
   const inputHarga = document.getElementById("input-harga").value;
 
   if(!inputNama || !inputHarga) {
@@ -154,13 +166,11 @@ window.simpanBarangBaru = async function() {
       nama: inputNama,
       harga: Number(inputHarga)
     });
-    document.getElementById("input-nama").value = "";
-    document.getElementById("input-harga").value = "";
     tutupModalTambah();
     window.ambilDataDariFirebase();
   } catch (error) {
     console.error("Gagal menyimpan:", error);
-    alert("Gagal menyimpan barang.");
+    alert("Gagal menyimpan barang ke Firebase.");
   } finally {
     btnSimpan.innerText = "Simpan";
     btnSimpan.disabled = false;
