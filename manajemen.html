@@ -4,67 +4,55 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Manajemen - Kasir Pintar Clone</title>
-  <link rel="stylesheet" href="style.css?v=7">
+  <link rel="stylesheet" href="style.css?v=8">
 </head>
-<!-- KODE RAHASIA: data-page="manajemen" agar JavaScript tahu ini halaman admin -->
 <body data-page="manajemen">
-
   <div class="app-container">
 
-    <!-- MODAL POP-UP TAMBAH BARANG -->
+    <!-- MODAL POP-UP TAMBAH BARANG (DENGAN VARIAN) -->
     <div id="modal-tambah" class="modal-overlay">
       <div class="modal-box">
         <h3>Tambah Menu Baru</h3>
         <div class="form-group">
-          <label>Nama Barang / Menu</label>
+          <label>Nama Menu</label>
           <input type="text" id="input-nama" placeholder="Contoh: Kopi Aren">
         </div>
         <div class="form-group">
-          <label>Harga (Rp)</label>
+          <label>Harga Dasar (Rp)</label>
           <input type="number" id="input-harga" placeholder="Contoh: 15000">
         </div>
-        <div style="display: flex; gap: 12px; margin-top: 20px;">
+        
+        <!-- BAGIAN VARIAN -->
+        <div style="margin-top: 20px; border-top: 1px dashed #e5e7eb; padding-top: 15px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <label style="font-size:14px; font-weight:bold; color:#374151;">Varian (Opsional)</label>
+            <span onclick="tambahBarisVarian()" style="color:#00b87c; font-size:13px; cursor:pointer; font-weight:bold;">+ Tambah</span>
+          </div>
+          <div id="tempat-varian">
+            <!-- Baris input varian akan muncul di sini via JavaScript -->
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 12px; margin-top: 24px;">
           <button class="btn-modal-batal" onclick="tutupModalTambah()">Batal</button>
           <button class="btn-modal-simpan" onclick="simpanBarangBaru()">Simpan</button>
         </div>
       </div>
     </div>
 
-    <!-- OVERLAY DAN SIDEBAR MENU (KIRI) -->
+    <!-- OVERLAY DAN SIDEBAR MENU -->
     <div id="overlay-menu" class="overlay" onclick="tutupMenu()"></div>
     <div id="sidebar-menu" class="sidebar">
       <div class="sidebar-header">
         <div class="profile-info">
           <div class="profile-pic">S</div>
-          <div>
-            <div style="font-weight: bold; font-size: 16px;">Sera Coffee</div>
-            <div style="color: #6b7280; font-size: 14px;">Owner</div>
-          </div>
+          <div><div style="font-weight: bold; font-size: 16px;">Sera Coffee</div><div style="color: #6b7280; font-size: 14px;">Owner</div></div>
         </div>
       </div>
       <div class="sidebar-content">
-        <!-- Menu Manajemen diatur sebagai ACTIVE -->
-        <a href="manajemen.html" class="menu-item active">
-          <span class="menu-icon-sidebar"><svg class="icon icon-sm" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg></span>Manajemen
-        </a>
-        <a href="penjualan.html" class="menu-item">
-          <span class="menu-icon-sidebar"><svg class="icon icon-sm" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg></span>Transaksi Penjualan
-        </a>
-        <a href="#" class="menu-item">
-          <span class="menu-icon-sidebar"><svg class="icon icon-sm" viewBox="0 0 24 24"><line x1="16.5" y1="9.4" x2="7.5" y2="4.21"></line><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg></span>Pembelian Supplier
-        </a>
-        <a href="#" class="menu-item">
-          <span class="menu-icon-sidebar"><svg class="icon icon-sm" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg></span>Keuangan
-        </a>
-        <a href="#" class="menu-item">
-          <span class="menu-icon-sidebar"><svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg></span>Laporan
-        </a>
-        <a href="#" class="menu-item">
-          <span class="menu-icon-sidebar"><svg class="icon icon-sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg></span>Pengaturan
-        </a>
-        <a href="#" onclick="keluarAkun()" class="menu-item" style="color: #ef4444; margin-top: 20px;">
-          <span class="menu-icon-sidebar" style="color: #ef4444;"><svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg></span>Keluar
-        </a>
+        <a href="manajemen.html" class="menu-item active"><span class="menu-icon-sidebar"><svg class="icon icon-sm" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg></span>Manajemen</a>
+        <a href="penjualan.html" class="menu-item"><span class="menu-icon-sidebar"><svg class="icon icon-sm" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg></span>Transaksi Penjualan</a>
+        <a href="#" onclick="keluarAkun()" class="menu-item" style="color: #ef4444; margin-top: 20px;"><span class="menu-icon-sidebar" style="color: #ef4444;"><svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg></span>Keluar</a>
       </div>
     </div>
     
@@ -76,13 +64,10 @@
       </div>
     </div>
 
-    <!-- KONTEN (DAFTAR BARANG DARI FIREBASE) -->
-    <div class="content-area" id="area-produk" style="padding-bottom: 20px;">
-      <!-- Akan diisi otomatis oleh JavaScript (Hanya List + Tombol Hapus + Tambah Barang) -->
-    </div>
+    <!-- KONTEN -->
+    <div class="content-area" id="area-produk" style="padding-bottom: 20px;"></div>
 
   </div>
-
   <script type="module" src="script.js"></script>
 </body>
 </html>
