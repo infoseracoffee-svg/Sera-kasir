@@ -4,49 +4,121 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Kasir Pintar Pro Clone</title>
-  <!-- Mengambil Tailwind CSS via CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-100 h-screen flex items-center justify-center">
+  <style>
+    /* Reset dasar agar tampilan rapi di semua browser */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
 
-  <!-- Container Login -->
-  <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-sm">
-    
-    <!-- Logo / Judul -->
-    <div class="text-center mb-6">
-      <h1 class="text-2xl font-bold text-blue-600">Kasir Web Pro</h1>
-      <p class="text-gray-500 text-sm mt-1">Masuk untuk mengelola toko Anda</p>
+    /* Mengatur latar belakang dan posisi ke tengah layar */
+    body {
+      background-color: #f3f4f6;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      padding: 1rem;
+    }
+
+    /* Kotak putih untuk form login */
+    .login-container {
+      background-color: #ffffff;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 400px;
+    }
+
+    /* Bagian teks judul */
+    .header {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    .header h1 {
+      color: #2563eb; /* Warna biru */
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+    .header p {
+      color: #6b7280; /* Warna abu-abu */
+      font-size: 0.875rem;
+    }
+
+    /* Bagian input form */
+    .form-group {
+      margin-bottom: 1rem;
+    }
+    .form-group label {
+      display: block;
+      color: #374151;
+      font-size: 0.875rem;
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+    }
+    .form-group input {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+    /* Efek saat input diklik */
+    .form-group input:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+    }
+
+    /* Tombol masuk */
+    .btn-login {
+      width: 100%;
+      background-color: #2563eb;
+      color: white;
+      font-weight: bold;
+      padding: 0.75rem;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-top: 1rem;
+      transition: background-color 0.3s;
+    }
+    /* Efek saat tombol disentuh/di-hover */
+    .btn-login:hover {
+      background-color: #1d4ed8;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="login-container">
+    <div class="header">
+      <h1>Kasir Web Pro</h1>
+      <p>Masuk untuk mengelola toko Anda</p>
     </div>
 
-    <!-- Form Login -->
     <form id="loginForm">
-      <div class="mb-4">
-        <label class="block text-gray-700 text-sm font-bold mb-2" for="email">
-          Email
-        </label>
-        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500" id="email" type="email" placeholder="email@toko.com">
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input id="email" type="email" placeholder="email@toko.com">
       </div>
       
-      <div class="mb-6">
-        <label class="block text-gray-700 text-sm font-bold mb-2" for="password">
-          Password / PIN
-        </label>
-        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500" id="password" type="password" placeholder="******">
+      <div class="form-group">
+        <label for="password">Password / PIN</label>
+        <input id="password" type="password" placeholder="******">
       </div>
       
-      <div class="flex items-center justify-between">
-        <button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full" type="button" onclick="login()">
-          Masuk
-        </button>
-      </div>
+      <button class="btn-login" type="button" onclick="login()">Masuk</button>
     </form>
-
   </div>
 
   <script>
-    // Logika sederhana untuk pindah halaman
     function login() {
-      // Nanti logika ini akan diganti dengan Firebase Authentication
       alert("Fungsi login diklik! Nanti akan diarahkan ke Dashboard.");
     }
   </script>
