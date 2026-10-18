@@ -1,48 +1,58 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sera Coffee POS</title>
-  <style>
-    body { margin: 0; height: 100vh; display: flex; justify-content: center; align-items: center; background-color: #00b87c; color: white; font-family: 'Segoe UI', sans-serif; }
-    .loading-container { text-align: center; }
-    .spinner { width: 40px; height: 40px; border: 4px solid rgba(255, 255, 255, 0.3); border-radius: 50%; border-top-color: white; animation: spin 1s ease-in-out infinite; margin: 0 auto 16px auto; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sera Coffee POS - Login</title>
+    <link rel="stylesheet" href="css/auth.css">
 </head>
 <body>
-  <div class="loading-container">
-    <div class="spinner"></div>
-    <h2>Memuat Sera Coffee...</h2>
-  </div>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    <div class="auth-container">
+        <!-- FORM LOGIN -->
+        <div id="form-login" class="auth-card">
+            <div class="logo-box">☕ Sera Coffee</div>
+            <h2>Masuk ke Sistem</h2>
+            <p>Silakan masuk untuk mengelola kasir</p>
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyAJsFGevRIW1x_tNTVEqOXmE91AXwcnuiU",
-      authDomain: "seracoffeepos.firebaseapp.com",
-      projectId: "seracoffeepos",
-      storageBucket: "seracoffeepos.firebasestorage.app",
-      messagingSenderId: "361363482046",
-      appId: "1:361363482046:web:706c1084cadbff697945ef"
-    };
+            <div class="input-group">
+                <label>Email</label>
+                <input type="email" id="login-email" placeholder="admin@seracoffee.com">
+            </div>
+            <div class="input-group">
+                <label>Password</label>
+                <input type="password" id="login-password" placeholder="••••••••">
+            </div>
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
+            <button id="btn-login" class="btn-primary">Masuk</button>
+            <p class="switch-text">Belum punya akun? <span id="link-to-register">Daftar sekarang</span></p>
+        </div>
 
-    // Cek auth secepat mungkin, tapi beri jeda minimal agar animasi terlihat
-    const startTime = Date.now();
-    onAuthStateChanged(auth, (user) => {
-      const timeElapsed = Date.now() - startTime;
-      const delay = Math.max(0, 1000 - timeElapsed); // Minimal tunggu 1 detik
-      
-      setTimeout(() => {
-        window.location.href = user ? "penjualan.html" : "login.html";
-      }, delay);
-    });
-  </script>
+        <!-- FORM DAFTAR (Disembunyikan secara default) -->
+        <div id="form-register" class="auth-card hidden">
+            <div class="logo-box">☕ Sera Coffee</div>
+            <h2>Daftar Akun Baru</h2>
+            <p>Buat akun untuk akses POS</p>
+
+            <div class="input-group">
+                <label>Nama Lengkap</label>
+                <input type="text" id="reg-nama" placeholder="Nama Anda">
+            </div>
+            <div class="input-group">
+                <label>Email</label>
+                <input type="email" id="reg-email" placeholder="admin@seracoffee.com">
+            </div>
+            <div class="input-group">
+                <label>Password</label>
+                <input type="password" id="reg-password" placeholder="Minimal 6 karakter">
+            </div>
+
+            <button id="btn-register" class="btn-primary">Daftar</button>
+            <p class="switch-text">Sudah punya akun? <span id="link-to-login">Masuk di sini</span></p>
+        </div>
+    </div>
+
+    <!-- Panggil script auth (type="module" karena pakai Firebase nantinya) -->
+    <script type="module" src="js/auth.js"></script>
 </body>
 </html>
