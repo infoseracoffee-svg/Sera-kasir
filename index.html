@@ -3,23 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kasir Pintar Pro Clone</title>
+  <title>Sera Coffee POS</title>
   <style>
-    /* Sedikit styling untuk halaman loading */
+    /* Styling untuk halaman loading hijau */
     body {
       margin: 0;
       height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
-      background-color: #00b87c; /* Warna hijau khas Kasir Pintar */
+      background-color: #00b87c;
       color: white;
       font-family: 'Segoe UI', sans-serif;
     }
     .loading-container {
       text-align: center;
     }
-    /* Animasi putar (spinner) sederhana */
     .spinner {
       width: 40px;
       height: 40px;
@@ -36,22 +35,41 @@
 </head>
 <body>
 
-  <!-- Tampilan singkat saat aplikasi dibuka -->
   <div class="loading-container">
     <div class="spinner"></div>
-    <h2>Memuat Aplikasi...</h2>
+    <h2>Memuat Sera Coffee...</h2>
   </div>
 
-  <script>
-    // Script sederhana untuk simulasi pengecekan sesi login
-    // Biasanya di sini kita menggunakan Firebase Auth: "Apakah user sudah login?"
-    
-    // Untuk prototype ini, kita gunakan setTimeout agar halaman loading
-    // terlihat selama 1,5 detik sebelum diarahkan ke halaman login.
+  <script type="module">
+    // Panggil Firebase
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+    // Konfigurasi Sera Coffee
+    const firebaseConfig = {
+      apiKey: "AIzaSyAJsFGevRIW1x_tNTVEqOXmE91AXwcnuiU",
+      authDomain: "seracoffeepos.firebaseapp.com",
+      projectId: "seracoffeepos",
+      storageBucket: "seracoffeepos.firebasestorage.app",
+      messagingSenderId: "361363482046",
+      appId: "1:361363482046:web:706c1084cadbff697945ef"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    // Tahan sedikit selama 1 detik agar animasi loading terlihat keren, lalu cek akun
     setTimeout(() => {
-      // Perintah untuk pindah halaman
-      window.location.href = 'login.html'; 
-    }, 1500); 
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          // Jika memori HP masih mencatat akun sedang login
+          window.location.href = "penjualan.html";
+        } else {
+          // Jika belum pernah login atau sudah menekan tombol Keluar
+          window.location.href = "login.html";
+        }
+      });
+    }, 1000);
   </script>
 
 </body>
