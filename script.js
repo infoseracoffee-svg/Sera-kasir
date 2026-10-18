@@ -1,10 +1,10 @@
-// script.js - VERSI FIREBASE LENGKAP (AMBIL & TAMBAH DATA)
+// script.js - VERSI FIREBASE LENGKAP (DENGAN PROTEKSI LOGIN)
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-// Tambahkan addDoc untuk menyimpan data
 import { getFirestore, collection, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+// Tambahkan modul Auth
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-// Konfigurasi Sera Coffee
 const firebaseConfig = {
   apiKey: "AIzaSyAJsFGevRIW1x_tNTVEqOXmE91AXwcnuiU",
   authDomain: "seracoffeepos.firebaseapp.com",
@@ -16,15 +16,32 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const auth = getAuth(app);
 
 let produkList = [];
 let keranjang = [];
 
-document.addEventListener("DOMContentLoaded", () => {
-  ambilDataDariFirebase();
+// PROTEKSI HALAMAN (Cek apakah user sudah login)
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    // Jika sudah login, baru ambil data barang
+    window.ambilDataDariFirebase();
+  } else {
+    // Jika belum login, tendang ke halaman login
+    window.location.href = "login.html";
+  }
 });
 
-// FUNGSI 1: AMBIL DATA
+// FUNGSI LOGOUT / KELUAR
+window.keluarAkun = function() {
+  signOut(auth).then(() => {
+    // Berhasil keluar, akan otomatis dialihkan oleh onAuthStateChanged
+  }).catch((error) => {
+    alert("Gagal keluar dari akun.");
+  });
+}
+
+// FUNGSI 1: AMBIL DATA (Hanya jalan jika sudah login)
 window.ambilDataDariFirebase = async function() {
   const areaProduk = document.getElementById("area-produk");
   if(!areaProduk) return;
@@ -42,7 +59,7 @@ window.ambilDataDariFirebase = async function() {
     tampilkanProdukUI();
   } catch (error) {
     console.error("Gagal mengambil data:", error);
-    areaProduk.innerHTML = "<p style='padding: 16px; color: red;'>Gagal memuat data. Periksa internet atau Firebase Rules.</p>";
+    areaProduk.innerHTML = "<p style='padding: 16px; color: red;'>Gagal memuat data. Periksa internet Anda.</p>";
   }
 }
 
@@ -68,7 +85,6 @@ function tampilkanProdukUI() {
     areaProduk.appendChild(div);
   });
 
-  // Tambahkan Tombol "Tambah Barang" di akhir daftar barang
   const btnTambah = document.createElement("div");
   btnTambah.className = "add-item-card";
   btnTambah.style.marginBottom = "12px";
@@ -124,37 +140,28 @@ window.simpanBarangBaru = async function() {
   const inputNama = document.getElementById("input-nama").value;
   const inputHarga = document.getElementById("input-harga").value;
 
-  // Cek apakah ada yang kosong
   if(!inputNama || !inputHarga) {
     alert("Harap isi Nama dan Harga barang!");
     return;
   }
 
-  // Ubah teks tombol menjadi "Menyimpan..."
   const btnSimpan = document.querySelector(".btn-modal-simpan");
   btnSimpan.innerText = "Menyimpan...";
   btnSimpan.disabled = true;
 
   try {
-    // Perintah untuk mengirim data ke Firebase
     await addDoc(collection(db, "produk"), {
       nama: inputNama,
       harga: Number(inputHarga)
     });
-    
-    // Sukses, bersihkan form dan tutup
     document.getElementById("input-nama").value = "";
     document.getElementById("input-harga").value = "";
     tutupModalTambah();
-    
-    // Panggil ulang data dari Firebase agar barang baru langsung muncul
     window.ambilDataDariFirebase();
-
   } catch (error) {
     console.error("Gagal menyimpan:", error);
-    alert("Gagal menyimpan barang ke Firebase.");
+    alert("Gagal menyimpan barang.");
   } finally {
-    // Kembalikan kondisi tombol
     btnSimpan.innerText = "Simpan";
     btnSimpan.disabled = false;
   }
