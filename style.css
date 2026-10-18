@@ -4,7 +4,7 @@
    1. RESET & BASE STYLES
 ========================================= */
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, sans-serif; }
-body { background-color: #f8f9fa; display: flex; justify-content: center; align-items: center; min-height: 100vh; overflow: hidden; /* Mencegah scroll pada body utama */ }
+body { background-color: #f8f9fa; display: flex; justify-content: center; align-items: center; min-height: 100vh; overflow: hidden; }
 
 /* Mobile App Container */
 .app-container { width: 100%; max-width: 480px; background-color: #ffffff; height: 100vh; position: relative; display: flex; flex-direction: column; box-shadow: 0 0 15px rgba(0,0,0,0.1); overflow: hidden; }
@@ -44,7 +44,7 @@ body { background-color: #f8f9fa; display: flex; justify-content: center; align-
 /* =========================================
    4. AREA KONTEN (DAFTAR BARANG)
 ========================================= */
-.content-area { flex: 1; padding: 16px; overflow-y: auto; background-color: #fafafa; padding-bottom: 80px; /* Ruang untuk bottom bar */ }
+.content-area { flex: 1; padding: 16px; overflow-y: auto; background-color: #fafafa; padding-bottom: 80px; }
 .add-item-card { display: flex; align-items: center; gap: 16px; padding: 16px; background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); cursor: pointer; border: 1px solid #f1f1f1; transition: background-color 0.2s; }
 .add-item-card:active { background-color: #f1f5f9; }
 .add-icon-box { width: 40px; height: 40px; background-color: #f1f5f9; border-radius: 8px; display: flex; justify-content: center; align-items: center; color: #a0aec0; }
@@ -59,91 +59,20 @@ body { background-color: #f8f9fa; display: flex; justify-content: center; align-
 .profile-btn { width: 44px; height: 44px; border: 1px solid #00b87c; border-radius: 12px; display: flex; justify-content: center; align-items: center; color: #00b87c; background: none; cursor: pointer; }
 
 /* =========================================
-   6. SIDEBAR MENU SLIDE (YANG DIPERBAIKI)
+   6. SIDEBAR MENU SLIDE
 ========================================= */
-.sidebar {
-  position: absolute; /* Menggunakan absolute agar menempel pada app-container */
-  top: 0;
-  left: -320px; /* Sembunyikan di luar kontainer */
-  width: 280px;
-  height: 100%;
-  background-color: #ffffff;
-  z-index: 1000; 
-  transition: left 0.3s ease-in-out; 
-  box-shadow: 2px 0 10px rgba(0,0,0,0.1);
-  display: flex;
-  flex-direction: column;
-}
+.sidebar { position: absolute; top: 0; left: -320px; width: 280px; height: 100%; background-color: #ffffff; z-index: 1000; transition: left 0.3s ease-in-out; box-shadow: 2px 0 10px rgba(0,0,0,0.1); display: flex; flex-direction: column; }
+.sidebar.open { left: 0; }
 
-.sidebar.open {
-  left: 0; /* Geser masuk ke dalam kontainer */
-}
+.overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 999; display: none; opacity: 0; transition: opacity 0.3s ease-in-out; }
+.overlay.open { display: block; opacity: 1; }
 
-.overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 999;
-  display: none; 
-  opacity: 0;
-  transition: opacity 0.3s ease-in-out;
-}
+.sidebar-header { padding: 24px 16px; border-bottom: 1px solid #f1f1f1; background-color: white; }
+.profile-info { display: flex; align-items: center; gap: 12px; }
+.profile-pic { width: 50px; height: 50px; background-color: #00b87c; color: white; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 24px; font-weight: bold; }
+.sidebar-content { flex: 1; overflow-y: auto; padding: 16px 0; background-color: white; }
 
-.overlay.open {
-  display: block;
-  opacity: 1;
-}
-
-/* Desain Isi Menu */
-.sidebar-header {
-  padding: 24px 16px;
-  border-bottom: 1px solid #f1f1f1;
-  background-color: white;
-}
-.profile-info {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-.profile-pic {
-  width: 50px;
-  height: 50px;
-  background-color: #00b87c;
-  color: white;
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 24px;
-  font-weight: bold;
-}
-.sidebar-content {
-  flex: 1;
-  overflow-y: auto;
-  padding: 16px 0;
-  background-color: white;
-}
-.menu-item {
-  display: flex;
-  align-items: center;
-  padding: 14px 24px;
-  color: #333;
-  text-decoration: none; /* Mencegah warna biru dan garis bawah standar link HTML */
-  font-weight: 500;
-  gap: 16px;
-  transition: background-color 0.2s;
-}
-.menu-item:hover {
-  background-color: #f8f9fa;
-}
-.menu-item.active {
-  color: #00b87c;
-  background-color: #e6f4ea;
-  border-right: 4px solid #00b87c;
-}
-.menu-icon-sidebar {
-  font-size: 20px;
-}
+.menu-item { display: flex; align-items: center; padding: 14px 24px; color: #333; text-decoration: none; font-weight: 500; gap: 16px; transition: background-color 0.2s; }
+.menu-item:hover { background-color: #f8f9fa; }
+.menu-item.active { color: #00b87c; background-color: #e6f4ea; border-right: 4px solid #00b87c; }
+.menu-icon-sidebar { display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; color: inherit; }
