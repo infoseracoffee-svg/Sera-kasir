@@ -4,34 +4,113 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login - Kasir Pintar Clone</title>
-  <!-- Menghubungkan ke file CSS terpisah -->
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=4">
 </head>
 <body>
 
   <div class="app-container">
     <div class="login-wrapper">
       <div class="login-box">
-        <h1 class="login-title">Kasir Web Pro</h1>
-        <p class="login-subtitle">Masuk untuk mengelola toko Anda</p>
+        <h1 class="login-title">Sera Coffee POS</h1>
+        <p class="login-subtitle" id="form-subtitle">Masuk ke akun Anda</p>
 
-        <form id="loginForm">
-          <div class="form-group">
-            <label for="email">Email</label>
-            <input id="email" type="email" placeholder="email@toko.com">
-          </div>
-          
-          <div class="form-group">
-            <label for="password">Password / PIN</label>
-            <input id="password" type="password" placeholder="******">
-          </div>
-          
-          <!-- Tombol ini menggunakan JavaScript sederhana untuk pindah file -->
-          <button class="btn-login" type="button" onclick="window.location.href='penjualan.html'">Masuk</button>
-        </form>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input id="email" type="email" placeholder="email@toko.com">
+        </div>
+        
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input id="password" type="password" placeholder="Minimal 6 karakter">
+        </div>
+        
+        <button class="btn-login" id="btn-submit" onclick="prosesAuth()">Masuk</button>
+        
+        <p style="margin-top: 20px; font-size: 14px; color: #6b7280;" id="toggle-text">
+          Belum punya akun? <a href="#" onclick="toggleMode()" style="color:#00b87c; font-weight:bold; text-decoration:none;">Daftar di sini</a>
+        </p>
       </div>
     </div>
   </div>
 
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAJsFGevRIW1x_tNTVEqOXmE91AXwcnuiU",
+      authDomain: "seracoffeepos.firebaseapp.com",
+      projectId: "seracoffeepos",
+      storageBucket: "seracoffeepos.firebasestorage.app",
+      messagingSenderId: "361363482046",
+      appId: "1:361363482046:web:706c1084cadbff697945ef"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    // Jika sudah login sebelumnya, langsung arahkan ke halaman penjualan
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        window.location.href = "penjualan.html";
+      }
+    });
+
+    // Variabel untuk mode form (true = Login, false = Daftar)
+    let isLoginMode = true;
+
+    // Fungsi mengganti tampilan form Masuk/Daftar
+    window.toggleMode = function() {
+      isLoginMode = !isLoginMode;
+      document.getElementById("btn-submit").innerText = isLoginMode ? "Masuk" : "Daftar";
+      document.getElementById("form-subtitle").innerText = isLoginMode ? "Masuk ke akun Anda" : "Buat akun baru";
+      document.getElementById("toggle-text").innerHTML = isLoginMode 
+        ? 'Belum punya akun? <a href="#" onclick="toggleMode()" style="color:#00b87c; font-weight:bold; text-decoration:none;">Daftar di sini</a>' 
+        : 'Sudah punya akun? <a href="#" onclick="toggleMode()" style="color:#00b87c; font-weight:bold; text-decoration:none;">Masuk di sini</a>';
+    }
+
+    // Fungsi mengeksekusi Login atau Daftar
+    window.prosesAuth = function() {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      const btn = document.getElementById("btn-submit");
+
+      if(!email || !password) {
+        alert("Email dan Password tidak boleh kosong!");
+        return;
+      }
+      if(password.length < 6) {
+        alert("Password minimal 6 karakter!");
+        return;
+      }
+
+      btn.innerText = "Memproses...";
+      btn.disabled = true;
+
+      if (isLoginMode) {
+        // PROSES LOGIN
+        signInWithEmailAndPassword(auth, email, password)
+          .then((userCredential) => {
+            // Berhasil masuk, onAuthStateChanged di atas akan otomatis memindahkan halaman
+          })
+          .catch((error) => {
+            alert("Gagal masuk. Periksa kembali email dan password Anda.");
+            btn.innerText = "Masuk";
+            btn.disabled = false;
+          });
+      } else {
+        // PROSES DAFTAR
+        createUserWithEmailAndPassword(auth, email, password)
+          .then((userCredential) => {
+            alert("Akun berhasil dibuat! Anda akan langsung dialihkan.");
+          })
+          .catch((error) => {
+            alert("Gagal mendaftar: " + error.message);
+            btn.innerText = "Daftar";
+            btn.disabled = false;
+          });
+      }
+    }
+  </script>
 </body>
 </html>
