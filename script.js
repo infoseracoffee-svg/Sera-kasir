@@ -1,7 +1,8 @@
-// script.js - VERSI FIREBASE LENGKAP & DIAUDIT (PERBAIKAN ERROR INDEX)
+// script.js - VERSI FIREBASE LENGKAP (DENGAN FITUR HAPUS BARANG)
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, collection, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+// TAMBAHAN: Import doc dan deleteDoc untuk menghapus data
+import { getFirestore, collection, getDocs, addDoc, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
 const firebaseConfig = {
@@ -39,7 +40,7 @@ window.keluarAkun = function() {
   }
 }
 
-// FUNGSI 1: AMBIL DATA (Diperbaiki: Tanpa pengurutan agar tidak error index)
+// FUNGSI 1: AMBIL DATA
 window.ambilDataDariFirebase = async function() {
   if(isFetching) return;
   isFetching = true;
@@ -67,7 +68,7 @@ window.ambilDataDariFirebase = async function() {
   }
 }
 
-// FUNGSI 2: TAMPILKAN KE LAYAR
+// FUNGSI 2: TAMPILKAN KE LAYAR (Dengan Tombol Hapus)
 function tampilkanProdukUI() {
   const areaProduk = document.getElementById("area-produk");
   areaProduk.innerHTML = ""; 
@@ -76,16 +77,21 @@ function tampilkanProdukUI() {
     const div = document.createElement("div");
     div.className = "add-item-card"; 
     div.style.marginBottom = "12px"; 
+    
+    // Kita tambahkan tombol hapus (ikon tong sampah) di bagian kanan
     div.innerHTML = `
-      <div class="add-icon-box" style="background-color: #e6f4ea; color: #00b87c;">
+      <div class="add-icon-box" style="background-color: #e6f4ea; color: #00b87c;" onclick="tambahKeKeranjang({id:'${produk.id}', nama:'${produk.nama}', harga:${produk.harga}})">
         <svg class="icon" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
       </div>
-      <div class="add-item-text" style="flex: 1;">
+      <div class="add-item-text" style="flex: 1;" onclick="tambahKeKeranjang({id:'${produk.id}', nama:'${produk.nama}', harga:${produk.harga}})">
         <div style="font-weight:bold; color:#333;">${produk.nama}</div>
         <div style="color: #00b87c; font-size: 14px; margin-top:2px;">Rp ${Number(produk.harga).toLocaleString("id-ID")}</div>
       </div>
+      <div onclick="hapusBarang('${produk.id}', '${produk.nama}', event)" style="padding: 8px; color: #ef4444; border-radius: 8px; cursor: pointer;">
+        <svg class="icon icon-sm" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+      </div>
     `;
-    div.onclick = () => tambahKeKeranjang(produk);
+    
     areaProduk.appendChild(div);
   });
 
@@ -100,7 +106,27 @@ function tampilkanProdukUI() {
   areaProduk.appendChild(btnTambah);
 }
 
-// FUNGSI 3: LOGIKA KERANJANG
+// FUNGSI 3: LOGIKA HAPUS BARANG
+window.hapusBarang = async function(id, nama, event) {
+  // event.stopPropagation() berfungsi agar saat tong sampah diklik, 
+  // barang tidak ikut masuk ke keranjang belanja
+  event.stopPropagation(); 
+
+  if(confirm(`Yakin ingin menghapus menu "${nama}" dari database?`)) {
+    try {
+      // Perintah menghapus dokumen di Firebase berdasarkan ID
+      await deleteDoc(doc(db, "produk", id));
+      
+      // Refresh layar setelah terhapus
+      window.ambilDataDariFirebase();
+    } catch (error) {
+      console.error("Gagal menghapus:", error);
+      alert("Gagal menghapus barang.");
+    }
+  }
+}
+
+// FUNGSI 4: LOGIKA KERANJANG
 window.tambahKeKeranjang = function(produk) {
   keranjang.push(produk); 
   updateKeranjangUI();    
@@ -122,7 +148,7 @@ function updateKeranjangUI() {
   }
 }
 
-// FUNGSI 4: SIDEBAR MENU
+// FUNGSI 5: SIDEBAR MENU
 window.bukaMenu = function() {
   document.getElementById("sidebar-menu").classList.add("open");
   document.getElementById("overlay-menu").classList.add("open");
@@ -132,7 +158,7 @@ window.tutupMenu = function() {
   document.getElementById("overlay-menu").classList.remove("open");
 }
 
-// FUNGSI 5: MODAL & SIMPAN KE FIREBASE
+// FUNGSI 6: MODAL & SIMPAN KE FIREBASE
 window.bukaModalTambah = function() {
   document.getElementById("modal-tambah").classList.add("show");
   document.getElementById("input-nama").focus();
