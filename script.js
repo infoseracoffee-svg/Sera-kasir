@@ -1,8 +1,7 @@
-// script.js - VERSI FIREBASE LENGKAP & DIAUDIT
+// script.js - VERSI FIREBASE LENGKAP & DIAUDIT (PERBAIKAN ERROR INDEX)
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-// Tambahkan query dan orderBy untuk mengurutkan data
-import { getFirestore, collection, getDocs, addDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getFirestore, collection, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
 const firebaseConfig = {
@@ -20,14 +19,13 @@ const auth = getAuth(app);
 
 let produkList = [];
 let keranjang = [];
-let isFetching = false; // Mencegah pengambilan data berulang kali secara bersamaan
+let isFetching = false; 
 
 // PROTEKSI HALAMAN
 onAuthStateChanged(auth, (user) => {
   if (user) {
     window.ambilDataDariFirebase();
   } else {
-    // Hindari redirect berulang jika memang sudah di halaman login
     if(!window.location.href.includes("login.html")) {
         window.location.href = "login.html";
     }
@@ -41,7 +39,7 @@ window.keluarAkun = function() {
   }
 }
 
-// FUNGSI 1: AMBIL DATA (Diurutkan berdasarkan Nama)
+// FUNGSI 1: AMBIL DATA (Diperbaiki: Tanpa pengurutan agar tidak error index)
 window.ambilDataDariFirebase = async function() {
   if(isFetching) return;
   isFetching = true;
@@ -52,9 +50,7 @@ window.ambilDataDariFirebase = async function() {
   areaProduk.innerHTML = "<p style='padding: 16px; color: #6b7280; text-align:center;'>Memuat menu Sera Coffee...</p>";
 
   try {
-    // Ambil data dan urutkan berdasarkan nama secara Ascending (A-Z)
-    const q = query(collection(db, "produk"), orderBy("nama", "asc"));
-    const querySnapshot = await getDocs(q);
+    const querySnapshot = await getDocs(collection(db, "produk"));
     
     produkList = []; 
     querySnapshot.forEach((doc) => {
@@ -65,8 +61,7 @@ window.ambilDataDariFirebase = async function() {
     tampilkanProdukUI();
   } catch (error) {
     console.error("Gagal mengambil data:", error);
-    // Jika gagal karena orderBy (biasanya butuh Index Firestore pertama kali), fallback tanpa pengurutan
-    areaProduk.innerHTML = "<p style='padding: 16px; color: red;'>Data gagal dimuat. (Atau sedang membuat Index di Firestore).</p>";
+    areaProduk.innerHTML = "<p style='padding: 16px; color: red;'>Data gagal dimuat. Periksa koneksi internet atau Aturan Firebase.</p>";
   } finally {
     isFetching = false;
   }
