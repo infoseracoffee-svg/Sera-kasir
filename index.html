@@ -1,58 +1,88 @@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sera Coffee POS - Login</title>
-    <link rel="stylesheet" href="css/auth.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#166534">
+  <title>Login - Sera Coffee POS</title>
+
+  <link rel="stylesheet" href="css/auth.css">
 </head>
 <body>
 
-    <div class="auth-container">
-        <!-- FORM LOGIN -->
-        <div id="form-login" class="auth-card">
-            <div class="logo-box">☕ Sera Coffee</div>
-            <h2>Masuk ke Sistem</h2>
-            <p>Silakan masuk untuk mengelola kasir</p>
+  <main class="auth-container">
+    <section class="auth-card">
 
-            <div class="input-group">
-                <label>Email</label>
-                <input type="email" id="login-email" placeholder="admin@seracoffee.com">
-            </div>
-            <div class="input-group">
-                <label>Password</label>
-                <input type="password" id="login-password" placeholder="••••••••">
-            </div>
+      <div class="brand">
+        <div class="brand-icon">S</div>
+        <h1>Sera Coffee</h1>
+        <p>Point of Sale</p>
+      </div>
 
-            <button id="btn-login" class="btn-primary">Masuk</button>
-            <p class="switch-text">Belum punya akun? <span id="link-to-register">Daftar sekarang</span></p>
+      <div class="auth-heading">
+        <h2>Selamat Datang</h2>
+        <p>Masuk ke akun kasir Anda</p>
+      </div>
+
+      <form id="loginForm">
+
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="nama@email.com"
+            autocomplete="email"
+            required
+          >
         </div>
 
-        <!-- FORM DAFTAR (Disembunyikan secara default) -->
-        <div id="form-register" class="auth-card hidden">
-            <div class="logo-box">☕ Sera Coffee</div>
-            <h2>Daftar Akun Baru</h2>
-            <p>Buat akun untuk akses POS</p>
-
-            <div class="input-group">
-                <label>Nama Lengkap</label>
-                <input type="text" id="reg-nama" placeholder="Nama Anda">
-            </div>
-            <div class="input-group">
-                <label>Email</label>
-                <input type="email" id="reg-email" placeholder="admin@seracoffee.com">
-            </div>
-            <div class="input-group">
-                <label>Password</label>
-                <input type="password" id="reg-password" placeholder="Minimal 6 karakter">
-            </div>
-
-            <button id="btn-register" class="btn-primary">Daftar</button>
-            <p class="switch-text">Sudah punya akun? <span id="link-to-login">Masuk di sini</span></p>
+        <div class="form-group">
+          <label for="password">Kata Sandi</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Masukkan kata sandi"
+            autocomplete="current-password"
+            minlength="6"
+            required
+          >
         </div>
-    </div>
 
-    <!-- Panggil script auth (type="module" karena pakai Firebase nantinya) -->
-    <script type="module" src="js/auth.js"></script>
+        <div class="form-options">
+          <label class="remember">
+            <input type="checkbox" id="rememberMe">
+            <span>Ingat saya</span>
+          </label>
+
+          <a href="#" id="forgotPassword">Lupa kata sandi?</a>
+        </div>
+
+        <p id="authMessage" role="status" aria-live="polite"></p>
+
+        <button type="submit" id="loginButton">
+          Masuk
+        </button>
+
+      </form>
+
+      <div class="auth-footer">
+        <p>
+          Belum punya akun?
+          <a href="daftar.html">Daftar sekarang</a>
+        </p>
+      </div>
+
+    </section>
+
+    <footer>
+      &copy; 2026 Sera Coffee POS
+    </footer>
+  </main>
+
+  <script type="module" src="js/auth.js"></script>
 </body>
 </html>
